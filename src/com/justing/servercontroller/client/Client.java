@@ -43,13 +43,12 @@ public class Client {
     * @return 0 - if connected successfully. <br>
     *         1 - if UnknownHostException error occurred. <br>
     *         2 - if IOException error occurred. <br>
-    *         -1 - if unhandled error occurred. <br>
     */
     public int connect(String ip, int port) {
         this.ip = ip;
         this.port = port;
         
-        int success = -1;
+        int success;
         try {
             client = new Socket(ip, port);
             out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));

@@ -13,7 +13,7 @@ public class LoggerTextArea implements Logger{
     
     @Override
     public void log(String str) {
-        textArea.setText(textArea.getText() + "\n" + str);
+        textArea.setText(textArea.getText() + System.lineSeparator() + str);
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 

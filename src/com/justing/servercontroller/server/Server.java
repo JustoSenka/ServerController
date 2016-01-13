@@ -4,6 +4,8 @@ import com.justing.servercontroller.utils.Logger;
 import com.justing.servercontroller.utils.*;
 import java.net.*;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Server {
     private final static Server Instance = new Server();
@@ -133,11 +135,11 @@ public class Server {
                 // Read incomming data
                 String message;
                 while ((message = in.readLine()) != null && run) {
-                    logger.log(socket.getRemoteSocketAddress() + ": " + message);
+                    logger.log(getTime() + message);
                     if (message != null || !"".equals(message)) {
                         // Sends modified answer according to message
                         sendAnswer(out, DI.getCalculation().getAnswerMessage(message));
-                        // Alters int class not to close connection so fast.
+                        // Alters client timeout not to close connection so fast.
                         clientTimeout.value = CLIENT_TIMEOUT;
                     }
                     trySleep(1000 / FPS);
@@ -173,6 +175,7 @@ public class Server {
         }).start();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Helper methods"> 
     private void closeStreams(BufferedWriter out, BufferedReader in, Socket socket) throws IOException {
         out.close();
         in.close();
@@ -185,6 +188,10 @@ public class Server {
         out.flush();
     }
     
+    private String getTime() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + ": ";
+    }
+    
     private void trySleep(long time) {
         try {
             Thread.sleep(time);
@@ -192,5 +199,7 @@ public class Server {
             logger.log(e.getMessage());
         }
     }
+    //</editor-fold>
+    
     //</editor-fold>
 }

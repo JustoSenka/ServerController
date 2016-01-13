@@ -1,5 +1,6 @@
 package com.justing.servercontroller.server;
 
+import com.justing.servercontroller.utils.FileLogger;
 import com.justing.servercontroller.utils.Logger;
 import com.justing.servercontroller.utils.LoggerTextArea;
 import java.io.IOException;
@@ -36,6 +37,11 @@ public class ServerJFrame extends javax.swing.JFrame {
         setName("serverFrame"); // NOI18N
         setPreferredSize(new java.awt.Dimension(500, 400));
         setSize(new java.awt.Dimension(500, 400));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         portField.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         portField.setToolTipText("Enter port number");
@@ -126,6 +132,7 @@ public class ServerJFrame extends javax.swing.JFrame {
 
     private void hostButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hostButtonActionPerformed
         int port;
+        textArea.setText("");
         if ((port = tryParse(portField.getText())) == -1) {
             logger.log("Invalid port.");
         } else {
@@ -148,11 +155,18 @@ public class ServerJFrame extends javax.swing.JFrame {
         hostButton.setEnabled(true);
         ipField.setText("");
         logger.log("Server successfully destroyed.");
+        logToFile();
     }//GEN-LAST:event_stopButtonActionPerformed
 
     private void logOnlyMessagesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOnlyMessagesCheckActionPerformed
         s.setLogOnlyMessages(logOnlyMessagesCheck.isSelected());
     }//GEN-LAST:event_logOnlyMessagesCheckActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        if (stopButton.isEnabled()){
+            stopButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     private int tryParse(String str) {
         int i = -1;
@@ -163,7 +177,13 @@ public class ServerJFrame extends javax.swing.JFrame {
         }
         return i;
     }
-
+    
+    private void logToFile(){
+        logger.log(new FileLogger(System.getProperty("user.home") +
+                "\\ServerControllerLogs", "log.txt")
+                .logToFile(textArea.getText(), 5));
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton hostButton;
     private javax.swing.JTextField ipField;
